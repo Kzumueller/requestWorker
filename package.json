@@ -1,6 +1,6 @@
 {
-  "name": "@zumueller/requestworker",
-  "version": "0.1.1",
+  "name": "requestworker",
+  "version": "0.1.0",
   "description": "Tiny JavaScript module to send asynchronous requests",
   "main": "src/requestWorker.js",
   "scripts": {
