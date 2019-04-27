@@ -1,4 +1,4 @@
-window.requestWorker = (() => {
+export default (() => {
 
   "use strict";
 
