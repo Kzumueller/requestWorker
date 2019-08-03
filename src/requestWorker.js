@@ -93,8 +93,8 @@ export default (() => {
   /**
    * GET request
    *
-   * @param url
-   * @param data
+   * @param {String} url
+   * @param {Map} data
    * @returns {Promise<String>}
    */
   const requestGet = (url, data) => {
@@ -111,8 +111,8 @@ export default (() => {
   /**
    * POST request
    *
-   * @param url
-   * @param data
+   * @param {String} url
+   * @param {Map} data
    * @returns {Promise<String>}
    */
   const requestPost = (url, data) => {
