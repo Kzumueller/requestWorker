@@ -1,6 +1,6 @@
 {
   "name": "asynchrolicious",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Tiny JavaScript module to send asynchronous requests",
   "main": "src/requestWorker.js",
   "scripts": {
