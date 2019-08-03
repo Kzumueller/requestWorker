@@ -25,9 +25,13 @@ import myLessSillyAlias from 'asynchrolicious';
   /**
    * takes a URL and a Map (parameters => arguments), sends a request and returns a Promise resolving to the response
    *
+   * supported methods are GET (default) and POST
+   * POST requests will be sent as content type x-www-form-urlencoded
+   *
    * @param {String} url
    * @param {Map} data optional
-   * @returns {Promise<String>} HTML response
+   * @param {String?} method defaults to GET
+   * @returns {Promise<String>} response
    */
   const request = (url, data) => {/*...*/}
 
@@ -64,5 +68,4 @@ import myLessSillyAlias from 'asynchrolicious';
 - Arbitrary depth of Array-type parameters for `parseParameters` and `parseHref`, e.g.  
 `?parameter[tier1][tier2][tier3]=argument`
 
-- POST requests
-- Error Handling / processing HTTP status codes
+- Error Handling / processing HTTP status codes, any response will be returned unfiltered

@@ -75,11 +75,29 @@ export default (() => {
   /**
    * takes a URL and a Map (parameters => arguments), sends a request and returns a Promise resolving to the response
    *
+   * supported methods are GET (default) and POST
+   * POST requests will be sent as content type x-www-form-urlencoded
+   *
    * @param {String} url
    * @param {Map} data optional
-   * @returns {Promise<String>} HTML response
+   * @param {String?} method defaults to GET
+   * @returns {Promise<String>} response
    */
-  const request = (url, data) => {
+  const request = (url, data, method) => {
+    if('POST' === method)
+      return requestPost(url, data);
+    else
+      return requestGet(url, data);
+  };
+
+  /**
+   * GET request
+   *
+   * @param url
+   * @param data
+   * @returns {Promise<String>}
+   */
+  const requestGet = (url, data) => {
     const xhr = new XMLHttpRequest();
 
     xhr.open('GET', url + parseParameters(data));
@@ -90,9 +108,28 @@ export default (() => {
     }));
   };
 
+  /**
+   * POST request
+   *
+   * @param url
+   * @param data
+   * @returns {Promise<String>}
+   */
+  const requestPost = (url, data) => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.open('POST', url);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+    return (new Promise(resolve => {
+      xhr.onload = () => resolve(xhr.responseText || '');
+      xhr.send(parseParameters(data).replace('?', ''));
+    }));
+  };
+
   return {
-    request: request,
-    parseParameters: parseParameters,
+    request,
+    parseParameters,
     parseHref: parseHref
   };
 
