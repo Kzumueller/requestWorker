@@ -28,12 +28,14 @@ import myLessSillyAlias from 'asynchrolicious';
    * supported methods are GET (default) and POST
    * POST requests will be sent as content type x-www-form-urlencoded
    *
+   * for status(es) other than 200, the Promise will be rejected, yielding an object (as described below) containing the returned status and the responseText
+   *
    * @param {String} url
-   * @param {Map} data optional
-   * @param {String?} method defaults to GET
-   * @returns {Promise<String>} response
+   * @param {Map} [data] optional
+   * @param {String?} [method] defaults to GET
+   * @returns {Promise<String|{{status: number, responseText: string}}>} response
    */
-  const request = (url, data) => {/*...*/}
+  const request = (url, data, method) => {/*...*/}
 
   /**
    * iterates over a Map mapping parameters to arguments and returns a GET string
@@ -49,17 +51,18 @@ import myLessSillyAlias from 'asynchrolicious';
    *
    * '?scalarParam=scalarArg&vectorParam[]=1&vectorParam[]=2'
    *
-   * @param {Map} data
+   * @param {Map} [data]
    * @return {String}
    */
   const parseParameters = data => {/*...*/}
 
   /**
-   * takes the current location.href and turns it into a Map understood by parseParameters
+   * takes the optional getString or the current location.href and turns it into a Map understood by parseParameters
    *
+   * @param {String} [getString] optional
    * @return {Map}
    */
-  const parseHref = () => {/*...*/}
+  const parseHref = getString => {/*...*/}
 ```
   
 
@@ -67,5 +70,3 @@ import myLessSillyAlias from 'asynchrolicious';
 
 - Arbitrary depth of Array-type parameters for `parseParameters` and `parseHref`, e.g.  
 `?parameter[tier1][tier2][tier3]=argument`
-
-- Error Handling / processing HTTP status codes, any response will be returned unfiltered

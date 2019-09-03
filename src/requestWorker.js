@@ -16,7 +16,7 @@ export default (() => {
    *
    * '?scalarParam=scalarArg&vectorParam[]=1&vectorParam[]=2'
    *
-   * @param {Map} data
+   * @param {Map} [data]
    * @return {String}
    */
   const parseParameters = data => {
@@ -38,15 +38,16 @@ export default (() => {
   };
 
   /**
-   * takes the current location.href and turns it into a Map understood by parseParameters
+   * takes the optional getString or the current location.href and turns it into a Map understood by parseParameters
    *
+   * @param {String} [getString] optional
    * @return {Map}
    */
-  const parseHref = () => {
+  const parseHref = getString => {
     const params = new Map();
 
     // first we need only the query string which comes after the question mark
-    const queryString = location.href.split('?')[1];
+    const queryString = getString ? getString.replace(/[?#]/, '') : location.href.split('?')[1];
 
     if(!queryString) { // if that is undefined, we'll stop here
       return params;
@@ -78,10 +79,12 @@ export default (() => {
    * supported methods are GET (default) and POST
    * POST requests will be sent as content type x-www-form-urlencoded
    *
+   * for status(es) other than 200, the Promise will be rejected, yielding an object (as described below) containing the returned status and the responseText
+   *
    * @param {String} url
-   * @param {Map} data optional
-   * @param {String?} method defaults to GET
-   * @returns {Promise<String>} response
+   * @param {Map} [data] optional
+   * @param {String?} [method] defaults to GET
+   * @returns {Promise<String|{{status: number, responseText: string}}>} response
    */
   const request = (url, data, method) => {
     if('POST' === method)
@@ -91,19 +94,28 @@ export default (() => {
   };
 
   /**
+   * resolves or rejects a Promise by evaluating xhr's status (resolve for status 200, reject otherwise)
+   *
+   * @param {XMLHttpRequest} xhr
+   * @param {Function} resolve
+   * @param {Function} reject
+   */
+  const resolvePromise = (xhr, resolve, reject) => 200 === xhr.status ? resolve(xhr.responseText || '') : reject({status: xhr.status, responseText: xhr.responseText});
+
+  /**
    * GET request
    *
    * @param {String} url
    * @param {Map} data
-   * @returns {Promise<String>}
+   * @returns {Promise<String|{{status: number, responseText: string}}>}
    */
   const requestGet = (url, data) => {
     const xhr = new XMLHttpRequest();
 
     xhr.open('GET', url + parseParameters(data));
 
-    return (new Promise(resolve => {
-      xhr.onload = () => resolve(xhr.responseText || '');
+    return (new Promise((resolve, reject) => {
+      xhr.onload = resolvePromise.bind(null, xhr, resolve, reject);
       xhr.send();
     }));
   };
@@ -113,7 +125,7 @@ export default (() => {
    *
    * @param {String} url
    * @param {Map} data
-   * @returns {Promise<String>}
+   * @returns {Promise<String|{{status: number, responseText: string}}>}
    */
   const requestPost = (url, data) => {
     const xhr = new XMLHttpRequest();
@@ -121,8 +133,8 @@ export default (() => {
     xhr.open('POST', url);
     xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
-    return (new Promise(resolve => {
-      xhr.onload = () => resolve(xhr.responseText || '');
+    return (new Promise((resolve, reject) => {
+      xhr.onload = resolvePromise.bind(null, xhr, resolve, reject);
       xhr.send(parseParameters(data).replace('?', ''));
     }));
   };
@@ -130,7 +142,7 @@ export default (() => {
   return {
     request,
     parseParameters,
-    parseHref: parseHref
+    parseHref
   };
 
 })();
